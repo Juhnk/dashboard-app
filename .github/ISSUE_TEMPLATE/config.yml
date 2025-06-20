@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/your-org/dashboard-app/discussions
+    about: Ask questions, share ideas, and discuss the project with the community
+  - name: 🔒 Security Issues
+    url: https://github.com/your-org/dashboard-app/security/advisories/new
+    about: Report security vulnerabilities privately
+  - name: 📖 Documentation
+    url: https://github.com/your-org/dashboard-app/tree/main/docs
+    about: Browse the complete documentation hub
+  - name: 📧 Email Support
+    url: mailto:support@mustache-cashstage.dev
+    about: Contact the team directly for complex issues or business inquiries

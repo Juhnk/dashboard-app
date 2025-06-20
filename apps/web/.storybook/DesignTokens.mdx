@@ -1,0 +1,223 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Design System/Design Tokens" />
+
+# Design Tokens
+## The Foundation of Visual Consistency
+
+Design tokens are the visual DNA of our platform. They ensure consistency across all components and enable systematic design decisions.
+
+## 🎨 Color Palette
+
+### Primary Colors
+Our primary color palette reflects trust, intelligence, and data-driven decision making:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', margin: '2rem 0' }}>
+  <div style={{ padding: '1rem', backgroundColor: '#3b82f6', color: 'white', borderRadius: '8px' }}>
+    <strong>Primary Blue</strong><br/>
+    #3b82f6<br/>
+    <small>Main actions, links, focus states</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#1e40af', color: 'white', borderRadius: '8px' }}>
+    <strong>Primary Dark</strong><br/>
+    #1e40af<br/>
+    <small>Hover states, pressed buttons</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#dbeafe', color: '#1e40af', borderRadius: '8px' }}>
+    <strong>Primary Light</strong><br/>
+    #dbeafe<br/>
+    <small>Backgrounds, subtle highlights</small>
+  </div>
+</div>
+
+### Semantic Colors
+Colors that communicate meaning and state:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', margin: '2rem 0' }}>
+  <div style={{ padding: '1rem', backgroundColor: '#10b981', color: 'white', borderRadius: '8px' }}>
+    <strong>Success</strong><br/>
+    #10b981<br/>
+    <small>Positive trends, completed actions</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#f59e0b', color: 'white', borderRadius: '8px' }}>
+    <strong>Warning</strong><br/>
+    #f59e0b<br/>
+    <small>Cautions, pending states</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#ef4444', color: 'white', borderRadius: '8px' }}>
+    <strong>Danger</strong><br/>
+    #ef4444<br/>
+    <small>Errors, destructive actions</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#6b7280', color: 'white', borderRadius: '8px' }}>
+    <strong>Neutral</strong><br/>
+    #6b7280<br/>
+    <small>Secondary information</small>
+  </div>
+</div>
+
+### Chart Colors
+Optimized for data visualization and accessibility:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem', margin: '2rem 0' }}>
+  <div style={{ padding: '0.75rem', backgroundColor: '#4285f4', color: 'white', borderRadius: '6px', fontSize: '0.875rem' }}>
+    <strong>Google Blue</strong><br/>
+    #4285f4
+  </div>
+  <div style={{ padding: '0.75rem', backgroundColor: '#1877f2', color: 'white', borderRadius: '6px', fontSize: '0.875rem' }}>
+    <strong>Facebook Blue</strong><br/>
+    #1877f2
+  </div>
+  <div style={{ padding: '0.75rem', backgroundColor: '#0077b5', color: 'white', borderRadius: '6px', fontSize: '0.875rem' }}>
+    <strong>LinkedIn Blue</strong><br/>
+    #0077b5
+  </div>
+  <div style={{ padding: '0.75rem', backgroundColor: '#10b981', color: 'white', borderRadius: '6px', fontSize: '0.875rem' }}>
+    <strong>Success Green</strong><br/>
+    #10b981
+  </div>
+  <div style={{ padding: '0.75rem', backgroundColor: '#f59e0b', color: 'white', borderRadius: '6px', fontSize: '0.875rem' }}>
+    <strong>Warning Amber</strong><br/>
+    #f59e0b
+  </div>
+  <div style={{ padding: '0.75rem', backgroundColor: '#8b5cf6', color: 'white', borderRadius: '6px', fontSize: '0.875rem' }}>
+    <strong>Purple</strong><br/>
+    #8b5cf6
+  </div>
+</div>
+
+## 📏 Spacing System
+
+Consistent spacing creates visual rhythm and hierarchy:
+
+<div style={{ margin: '2rem 0' }}>
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+    <div style={{ width: '4px', height: '1rem', backgroundColor: '#3b82f6', marginRight: '1rem' }}></div>
+    <span><strong>xs:</strong> 4px - Tight spacing within components</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+    <div style={{ width: '8px', height: '1rem', backgroundColor: '#3b82f6', marginRight: '1rem' }}></div>
+    <span><strong>sm:</strong> 8px - Small gaps between related elements</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+    <div style={{ width: '16px', height: '1rem', backgroundColor: '#3b82f6', marginRight: '1rem' }}></div>
+    <span><strong>md:</strong> 16px - Standard spacing between components</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+    <div style={{ width: '24px', height: '1rem', backgroundColor: '#3b82f6', marginRight: '1rem' }}></div>
+    <span><strong>lg:</strong> 24px - Larger gaps for section separation</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+    <div style={{ width: '32px', height: '1rem', backgroundColor: '#3b82f6', marginRight: '1rem' }}></div>
+    <span><strong>xl:</strong> 32px - Major layout divisions</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+    <div style={{ width: '48px', height: '1rem', backgroundColor: '#3b82f6', marginRight: '1rem' }}></div>
+    <span><strong>2xl:</strong> 48px - Page-level spacing</span>
+  </div>
+</div>
+
+## 🔤 Typography Scale
+
+Clear information hierarchy through systematic font sizing:
+
+<div style={{ margin: '2rem 0' }}>
+  <div style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+    Heading 1 (36px) - Page titles
+  </div>
+  <div style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+    Heading 2 (30px) - Section headers
+  </div>
+  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+    Heading 3 (24px) - Subsection headers
+  </div>
+  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+    Heading 4 (20px) - Component titles
+  </div>
+  <div style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>
+    Body Text (16px) - Main content, button text
+  </div>
+  <div style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+    Small Text (14px) - Supporting information
+  </div>
+  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+    Caption (12px) - Metadata, timestamps
+  </div>
+</div>
+
+## 🔄 Animation & Transitions
+
+Smooth, purposeful animations that enhance usability:
+
+### Duration Scale
+<div style={{ margin: '1rem 0' }}>
+  <div style={{ marginBottom: '0.5rem' }}><strong>Fast:</strong> 150ms - Hover states, focus changes</div>
+  <div style={{ marginBottom: '0.5rem' }}><strong>Normal:</strong> 200ms - Button interactions, state changes</div>
+  <div style={{ marginBottom: '0.5rem' }}><strong>Slow:</strong> 300ms - Modal open/close, page transitions</div>
+</div>
+
+### Easing Functions
+<div style={{ margin: '1rem 0' }}>
+  <div style={{ marginBottom: '0.5rem' }}><strong>Ease Out:</strong> cubic-bezier(0, 0, 0.2, 1) - Natural deceleration</div>
+  <div style={{ marginBottom: '0.5rem' }}><strong>Ease In:</strong> cubic-bezier(0.4, 0, 1, 1) - Smooth acceleration</div>
+  <div style={{ marginBottom: '0.5rem' }}><strong>Ease In Out:</strong> cubic-bezier(0.4, 0, 0.2, 1) - Balanced motion</div>
+</div>
+
+## 📐 Border Radius
+
+Consistent corner rounding for modern, approachable design:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', margin: '2rem 0' }}>
+  <div style={{ padding: '1rem', backgroundColor: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '4px' }}>
+    <strong>Small (4px)</strong><br/>
+    <small>Buttons, inputs, badges</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '8px' }}>
+    <strong>Medium (8px)</strong><br/>
+    <small>Cards, panels, modals</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '12px' }}>
+    <strong>Large (12px)</strong><br/>
+    <small>Major layout containers</small>
+  </div>
+  <div style={{ padding: '1rem', backgroundColor: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '50%' }}>
+    <strong>Full</strong><br/>
+    <small>Avatars, indicators</small>
+  </div>
+</div>
+
+## 🎯 Usage Guidelines
+
+### Do's
+- ✅ Use design tokens for all visual properties
+- ✅ Reference this documentation when creating new components
+- ✅ Test color combinations for accessibility compliance
+- ✅ Maintain consistent spacing throughout layouts
+
+### Don'ts
+- ❌ Hardcode colors, sizes, or spacing values
+- ❌ Create custom values outside the token system
+- ❌ Use colors that don't meet accessibility standards
+- ❌ Break the visual hierarchy with inconsistent typography
+
+## 🔧 Implementation
+
+Design tokens are implemented through TailwindCSS configuration and CSS custom properties:
+
+```css
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e40af;
+  --color-success: #10b981;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --border-radius-md: 8px;
+  --transition-normal: 200ms ease-out;
+}
+```
+
+All components automatically inherit these tokens, ensuring visual consistency across the entire platform.
+
+---
+
+This token system is the foundation that enables our **anti-fragile design architecture**—consistent, scalable, and maintainable visual design at enterprise scale.

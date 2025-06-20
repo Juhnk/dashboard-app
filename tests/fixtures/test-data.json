@@ -1,0 +1,58 @@
+{
+  "dashboards": [
+    {
+      "id": "test-dashboard-1",
+      "name": "Test Marketing Dashboard",
+      "widgets": [
+        {
+          "id": "test-widget-1",
+          "type": "line_chart",
+          "title": "Test Line Chart",
+          "config": {
+            "metrics": ["impressions", "clicks"],
+            "dimension": "date"
+          }
+        },
+        {
+          "id": "test-widget-2", 
+          "type": "bar_chart",
+          "title": "Test Bar Chart",
+          "config": {
+            "metrics": ["cost", "revenue"],
+            "dimension": "channel"
+          }
+        }
+      ]
+    }
+  ],
+  "sampleChartData": [
+    {
+      "date": "2024-01-01",
+      "impressions": 1500,
+      "clicks": 45,
+      "cost": 125.50,
+      "revenue": 450.00,
+      "channel": "Google Ads"
+    },
+    {
+      "date": "2024-01-02", 
+      "impressions": 1800,
+      "clicks": 52,
+      "cost": 138.75,
+      "revenue": 520.00,
+      "channel": "Facebook Ads"
+    },
+    {
+      "date": "2024-01-03",
+      "impressions": 1650,
+      "clicks": 48,
+      "cost": 142.25,
+      "revenue": 480.00,
+      "channel": "Instagram Ads"
+    }
+  ],
+  "testUser": {
+    "email": "test@example.com",
+    "name": "Test User"
+  }
+}

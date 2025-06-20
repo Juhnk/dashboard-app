@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id                String @id @default(cuid())
+  name              String
+  domain            String? @unique
+  subscription_tier String @default("free")
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  users       User[]
+  dashboards  Dashboard[]
+  data_sources DataSource[]
+  themes      Theme[]
+  audit_logs  AuditLog[]
+
+  @@map("organizations")
+}
+
+model User {
+  id              String @id @default(cuid())
+  organization_id String
+  email           String @unique
+  password_hash   String
+  first_name      String
+  last_name       String
+  role            String // 'admin', 'editor', 'viewer'
+  is_active       Boolean @default(true)
+  last_login_at   DateTime?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  dashboards   Dashboard[]
+  audit_logs   AuditLog[]
+
+  @@map("users")
+}
+
+model Dashboard {
+  id              String @id @default(cuid())
+  organization_id String
+  created_by      String
+  name            String
+  description     String?
+  is_public       Boolean @default(false)
+  layout_config   Json?
+  refresh_interval Int?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  creator      User @relation(fields: [created_by], references: [id])
+  tabs         DashboardTab[]
+
+  @@map("dashboards")
+}
+
+model DashboardTab {
+  id           String @id @default(cuid())
+  dashboard_id String
+  name         String
+  position     Int
+  layout_config Json?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  dashboard Dashboard @relation(fields: [dashboard_id], references: [id], onDelete: Cascade)
+  widgets   Widget[]
+
+  @@map("dashboard_tabs")
+}
+
+model Widget {
+  id            String @id @default(cuid())
+  tab_id        String
+  name          String
+  widget_type   String // 'line_chart', 'bar_chart', 'pie_chart', etc.
+  position_x    Int
+  position_y    Int
+  width         Int
+  height        Int
+  config        Json
+  data_source_id String?
+  query_config  Json?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  tab         DashboardTab @relation(fields: [tab_id], references: [id], onDelete: Cascade)
+  data_source DataSource? @relation(fields: [data_source_id], references: [id])
+
+  @@map("widgets")
+}
+
+model DataSource {
+  id              String @id @default(cuid())
+  organization_id String
+  name            String
+  source_type     String // 'google_sheets', 'csv_upload', etc.
+  connection_config Json
+  schema_config   Json?
+  last_synced_at  DateTime?
+  sync_status     String @default("pending")
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  widgets      Widget[]
+  snapshots    DataSnapshot[]
+
+  @@map("data_sources")
+}
+
+model DataSnapshot {
+  id             String @id @default(cuid())
+  data_source_id String
+  snapshot_date  DateTime
+  data           Json
+  row_count      Int
+  created_at     DateTime @default(now())
+
+  data_source DataSource @relation(fields: [data_source_id], references: [id], onDelete: Cascade)
+
+  @@map("data_snapshots")
+}
+
+model Theme {
+  id              String @id @default(cuid())
+  organization_id String
+  name            String
+  is_default      Boolean @default(false)
+  colors          Json
+  fonts           Json?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@map("themes")
+}
+
+model AuditLog {
+  id              String @id @default(cuid())
+  organization_id String
+  user_id         String?
+  action          String
+  resource_type   String
+  resource_id     String?
+  details         Json?
+  ip_address      String?
+  user_agent      String?
+  created_at      DateTime @default(now())
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user         User? @relation(fields: [user_id], references: [id])
+
+  @@map("audit_logs")
+}

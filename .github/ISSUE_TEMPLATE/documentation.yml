@@ -1,0 +1,153 @@
+name: 📚 Documentation
+description: Report an issue with documentation or request documentation improvements
+title: '[Docs]: '
+labels: ['documentation', 'triage']
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping us improve our documentation! Clear, accurate documentation is essential for project success.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Preflight Checklist
+      description: Please ensure you've completed these steps before submitting.
+      options:
+        - label: I have searched existing issues to ensure this documentation issue hasn't been reported before
+          required: true
+        - label: I have checked the [Documentation Hub](../docs/README.md) for related information
+          required: true
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation issue is this?
+      options:
+        - Missing documentation
+        - Incorrect information
+        - Outdated content
+        - Unclear instructions
+        - Broken links
+        - Typos or grammar
+        - Accessibility issues
+        - Organization/structure
+        - Code examples not working
+        - Missing translations
+    validations:
+      required: true
+
+  - type: dropdown
+    id: doc-section
+    attributes:
+      label: Documentation Section
+      description: Which section of documentation does this relate to?
+      options:
+        - Main README
+        - Getting Started Guide
+        - API Documentation
+        - Contributing Guide
+        - Style Guide
+        - Deployment Guide
+        - Performance Standards
+        - Security Policy
+        - Design System
+        - Developer Reference (CLAUDE.md)
+        - Code of Conduct
+        - Changelog
+        - Storybook Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: doc-location
+    attributes:
+      label: Document Location
+      description: Provide the specific file path or URL where the issue occurs
+      placeholder: docs/api/README.md, line 123
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-content
+    attributes:
+      label: Current Content
+      description: Copy the current problematic content (if applicable)
+      placeholder: Paste the current content that has issues
+      render: markdown
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: Clearly describe the documentation issue
+      placeholder: Describe what's wrong or missing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-improvement
+    attributes:
+      label: Suggested Improvement
+      description: How should this be improved? Provide specific suggestions.
+      placeholder: This should be changed to...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user-impact
+    attributes:
+      label: Impact on Users
+      description: How does this documentation issue affect users?
+      options:
+        - Critical (prevents users from completing essential tasks)
+        - High (causes significant confusion or delays)
+        - Medium (minor confusion but workarounds exist)
+        - Low (cosmetic or minor issues)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected-audience
+    attributes:
+      label: Affected Audience
+      description: Who is affected by this documentation issue?
+      options:
+        - label: New developers/contributors
+        - label: Experienced developers
+        - label: End users
+        - label: System administrators
+        - label: Designers
+        - label: Project managers
+        - label: API consumers
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Provide any additional context that might be helpful
+      placeholder: |
+        - What were you trying to accomplish?
+        - What documentation did you expect to find?
+        - What alternatives did you try?
+
+  - type: textarea
+    id: proposed-content
+    attributes:
+      label: Proposed Content
+      description: If you have specific content suggestions, provide them here
+      placeholder: Suggested content or corrections...
+      render: markdown
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution Interest
+      description: Are you willing to help fix this documentation issue?
+      options:
+        - label: I'd like to submit a pull request to fix this
+        - label: I can provide more detailed feedback if needed
+        - label: I can help review proposed changes

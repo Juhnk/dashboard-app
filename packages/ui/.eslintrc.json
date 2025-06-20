@@ -1,0 +1,5 @@
+{
+  "root": true,
+  "extends": ["@mustache/eslint-config/react"],
+  "ignorePatterns": ["dist", "node_modules"]
+}

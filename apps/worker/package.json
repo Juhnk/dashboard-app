@@ -1,0 +1,40 @@
+{
+  "name": "@mustache/worker",
+  "version": "0.1.0",
+  "description": "Anti-fragile data ingestion worker with intelligent job processing",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "nest build",
+    "dev": "nest start --watch",
+    "start": "nest start",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.3.2",
+    "@nestjs/core": "^10.3.2",
+    "@nestjs/config": "^3.1.1",
+    "@nestjs/bull": "^10.0.1",
+    "@mustache/types": "*",
+    "bull": "^4.12.2",
+    "bullmq": "^5.1.5",
+    "ioredis": "^5.3.2",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1",
+    "class-validator": "^0.14.1",
+    "class-transformer": "^0.5.1",
+    "opossum": "^8.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.3.0",
+    "@nestjs/schematics": "^10.1.0",
+    "@nestjs/testing": "^10.3.2",
+    "@types/node": "^20.11.0",
+    "@types/bull": "^4.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  }
+}

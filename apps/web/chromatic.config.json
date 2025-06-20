@@ -1,0 +1,14 @@
+{
+  "projectToken": "PROJECT_TOKEN_PLACEHOLDER",
+  "buildScriptName": "build-storybook",
+  "exitZeroOnChanges": true,
+  "exitOnceUploaded": true,
+  "ignoreLastBuildOnBranch": "main",
+  "skip": "dependabot/**",
+  "externals": ["public/**"],
+  "delay": 1000,
+  "diffThreshold": 0.2,
+  "threshold": 0.063,
+  "allowConsoleErrors": false,
+  "untraced": ["**/node_modules/**"]
+}
