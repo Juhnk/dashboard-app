@@ -1,0 +1,328 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.changes.outputs.frontend }}
+      backend: ${{ steps.changes.outputs.backend }}
+      docs: ${{ steps.changes.outputs.docs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'apps/web/**'
+              - 'packages/**'
+            backend:
+              - 'apps/api/**'
+              - 'apps/worker/**'
+            docs:
+              - 'docs/**'
+              - '*.md'
+
+  setup:
+    name: Setup Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json') }}
+
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Run ESLint
+        run: npm run lint
+      - name: Check Prettier formatting
+        run: npm run format -- --check
+
+  typecheck:
+    name: Type Checking
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Run unit tests
+        run: npm run test:unit
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+
+  build:
+    name: Build Applications
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    strategy:
+      matrix:
+        app: [web, api, worker]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Build ${{ matrix.app }}
+        run: |
+          if [ "${{ matrix.app }}" = "web" ]; then
+            cd apps/web && npm run build
+          elif [ "${{ matrix.app }}" = "api" ]; then
+            cd apps/api && npm run build
+          elif [ "${{ matrix.app }}" = "worker" ]; then
+            cd apps/worker && npm run build
+          fi
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.app }}
+          path: |
+            apps/${{ matrix.app }}/dist
+            apps/${{ matrix.app }}/.next
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mustache
+          POSTGRES_PASSWORD: mustache_dev_password
+          POSTGRES_DB: mustache_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Setup test database
+        env:
+          DATABASE_URL: postgresql://mustache:mustache_dev_password@localhost:5432/mustache_test
+        run: |
+          cd apps/web
+          npx prisma generate
+          npx prisma db push
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgresql://mustache:mustache_dev_password@localhost:5432/mustache_test
+          REDIS_URL: redis://localhost:6379
+        run: npm run test
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mustache
+          POSTGRES_PASSWORD: mustache_dev_password
+          POSTGRES_DB: mustache_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+      - name: Setup test environment
+        env:
+          DATABASE_URL: postgresql://mustache:mustache_dev_password@localhost:5432/mustache_test
+          REDIS_URL: redis://localhost:6379
+          NEXTAUTH_SECRET: test-secret
+          NEXTAUTH_URL: http://localhost:3000
+        run: |
+          cd apps/web
+          npx prisma generate
+          npx prisma db push
+      - name: Run E2E tests
+        env:
+          DATABASE_URL: postgresql://mustache:mustache_dev_password@localhost:5432/mustache_test
+          REDIS_URL: redis://localhost:6379
+          NEXTAUTH_SECRET: test-secret
+          NEXTAUTH_URL: http://localhost:3000
+        run: npm run test:e2e
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  storybook:
+    name: Build Storybook
+    runs-on: ubuntu-latest
+    needs: [setup, changes]
+    if: needs.changes.outputs.frontend == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Build Storybook
+        run: npm run build-storybook
+      - name: Upload Storybook
+        uses: actions/upload-artifact@v3
+        with:
+          name: storybook-static
+          path: apps/web/storybook-static
+
+  visual-regression:
+    name: Visual Regression Testing
+    runs-on: ubuntu-latest
+    needs: [storybook, changes]
+    if: needs.changes.outputs.frontend == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: Run Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build-storybook
+          exitZeroOnChanges: true
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, e2e-tests, security-scan]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to staging
+        run: echo "Deploy to staging environment"
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, e2e-tests, security-scan]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to production
+        run: echo "Deploy to production environment"
