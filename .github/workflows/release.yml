@@ -3,10 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main
       - master
-      - develop
-      - alpha
 
 permissions:
   contents: write
@@ -14,41 +11,69 @@ permissions:
   pull-requests: write
 
 jobs:
+  check-ci:
+    name: Check CI Status
+    runs-on: ubuntu-latest
+    outputs:
+      ci-passed: ${{ steps.ci-status.outputs.state == 'success' }}
+    steps:
+      - name: Check CI workflow status
+        id: ci-status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: runs } = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'ci.yml',
+              head_sha: context.sha,
+              per_page: 1
+            });
+            
+            if (runs.workflow_runs.length === 0) {
+              core.setOutput('state', 'pending');
+              return;
+            }
+            
+            const latestRun = runs.workflow_runs[0];
+            core.setOutput('state', latestRun.conclusion || 'pending');
+
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-
+    needs: check-ci
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && needs.check-ci.outputs.ci-passed"
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-
+          
       - name: Install dependencies
         run: npm ci
-
+        
       - name: Verify build
         run: npm run build
-
+        
       - name: Run tests
         run: |
           npm run test:unit -- --run
           npm run typecheck
-
+          
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
-
+        
       - name: Summary
         if: success()
         run: |
@@ -60,7 +85,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "The new release has been automatically generated and published." >> $GITHUB_STEP_SUMMARY
           echo "Check the [Releases page](https://github.com/${{ github.repository }}/releases) for details." >> $GITHUB_STEP_SUMMARY
-
+          
       - name: Failure notification
         if: failure()
         run: |
